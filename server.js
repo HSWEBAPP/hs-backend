@@ -20,8 +20,8 @@ const app = express()
 app.use(express.json())
 
 app.use(cors({
-  origin: "*", // or your frontend URL
-  credentials: false,
+  origin: "https://hs-frontend-two.vercel.app/", // or your frontend URL
+  credentials: true,
 }));
 // Test route
 app.get('/', (req, res) => {
