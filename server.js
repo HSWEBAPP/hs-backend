@@ -20,9 +20,10 @@ const app = express()
 app.use(express.json())
 
 app.use(cors({
-  origin: "https://hs-frontend-two.vercel.app/", // or your frontend URL
-  credentials: true,
+  origin: "https://hs-frontend-1nft.vercel.app", // exact frontend URL
+  credentials: false,
 }));
+
 // Test route
 app.get('/', (req, res) => {
   res.send('API is running...')
