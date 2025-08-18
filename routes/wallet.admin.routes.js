@@ -17,10 +17,10 @@ const router = express.Router();
 router.get("/recharges", authMiddleware, adminAuth, getRechargeHistory);
 
 // Approve a recharge request
-router.put("/recharges/:id/approve", authMiddleware, adminAuth, approveRecharge);
+router.put("/recharges/approve/:id", authMiddleware, adminAuth, approveRecharge);
 
 // Reject a recharge request
-router.put("/recharges/:id/reject", authMiddleware, adminAuth, rejectRechargeRequest);
+router.put("/recharges/reject/:id", authMiddleware, adminAuth, rejectRechargeRequest);
 
 // ------------------- TRANSACTION HISTORY -------------------
 // Get all transactions (credits + debits)

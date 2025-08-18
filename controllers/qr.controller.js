@@ -53,10 +53,9 @@ export const getLatestQRCode = async (req, res) => {
 export const deleteQRCode = async (req, res) => {
   const { id } = req.params;
   try {
-    const qr = await QRCode.findById(id);
+    const qr = await QRCode.findByIdAndDelete(id);
     if (!qr) return res.status(404).json({ message: "QR code not found" });
 
-    await qr.remove();
     res.json({ message: "QR code deleted successfully" });
   } catch (err) {
     console.error(err);

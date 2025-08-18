@@ -4,11 +4,13 @@ import Wallet from '../models/Wallet.js';
 // 📌 Get all users
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({ role: 'user' }).select('-password -otp -otpExpires');
+    // fetch all fields, exclude only password & otp
+    const users = await User.find({}, { password: 0, otp: 0, "forgotPassword.otp": 0 });
+
     res.json(users);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to fetch users' });
+    console.error("Error fetching users:", err);
+    res.status(500).json({ message: "Error fetching users" });
   }
 };
 
@@ -67,5 +69,52 @@ export const toggleUserStatus = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Failed to update user status' });
+  }
+};
+
+
+// 📌 Update user (Admin Side)
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Allowed fields for update (to prevent accidental overwrite of sensitive data)
+    const allowedUpdates = [
+      "name",
+      "email",
+      "mobile",
+      "taluka",
+      "district",
+      "state",
+      "shopName",
+      "aadhaar",
+      "role",
+      "isActive"
+    ];
+
+    const updates = {};
+    for (let key of allowedUpdates) {
+      if (req.body[key] !== undefined) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, updates, {
+      new: true, // return updated doc
+      runValidators: true, // validate before saving
+      select: "-password -otp -otpExpires"
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      message: "User updated successfully",
+      user: updatedUser
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to update user" });
   }
 };

@@ -4,7 +4,8 @@ import {
   getUserById,
   deleteUser,
   getAllWallets,
-  toggleUserStatus
+  toggleUserStatus,
+  updateUser 
 } from "../controllers/admin.controller.js";
 import { authMiddleware, adminAuth } from "../middleware/authMiddleware.js";
 
@@ -18,6 +19,5 @@ router.delete("/users/:id", authMiddleware, adminAuth, deleteUser);
 router.get("/wallets", authMiddleware, adminAuth, getAllWallets);
 // Toggle user active/deactive
 router.patch("/users/:id/toggle", authMiddleware, adminAuth, toggleUserStatus);
-
-
+router.put("/users/:id", updateUser);
 export default router;

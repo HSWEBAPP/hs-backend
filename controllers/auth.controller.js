@@ -10,26 +10,56 @@ dotenv.config()
 // REGISTER
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const {
+      name,
+      email,
+      password,
+      mobile,
+      taluka,
+      district,
+      state,
+      shopName,
+      aadhaar,
+    } = req.body;
 
-    // Check if user exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: 'User already exists' });
+    // Check if user already exists by email or mobile
+    const existingUser = await User.findOne({
+      $or: [{ email }, { mobile }],
+    });
 
+    if (existingUser) {
+      let message = "User already exists";
+
+      if (existingUser.email === email) {
+        message = "Email already registered";
+      } else if (existingUser.mobile === mobile) {
+        message = "Mobile number already registered";
+      }
+
+      return res.status(400).json({ message });
+    }
+
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = Date.now() + 10 * 60 * 1000; // 10 min
+    const otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
 
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
+      mobile,
+      taluka,
+      district,
+      state,
+      shopName,
+      aadhaar,
       otp,
       otpExpires,
       isOtpVerified: false,
-      wallet: 0, // initial wallet
+      wallet: 0, // give ₹0 initial balance
     });
 
     await newUser.save();
@@ -38,11 +68,11 @@ export const registerUser = async (req, res) => {
     await sendOtpMail(email, otp);
 
     res.status(201).json({
-      message: 'User registered successfully. OTP sent to email.',
+      message: "User registered successfully. OTP sent to email.",
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error', error: err.message });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
