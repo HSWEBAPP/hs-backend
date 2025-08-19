@@ -6,7 +6,7 @@ import { deductToolUsage } from "../controllers/wallet.user.controller.js";
 const router = express.Router();
 
 router.post("/user/recharge/qr", authMiddleware, submitQRRecharge);
-router.get("/user/recharge/history", authMiddleware, getQRRechargeHistory);
+router.get("/recharge/history", authMiddleware, getQRRechargeHistory);
 router.post("/deduct-tool-usage", authMiddleware, deductToolUsage);
 
 export default router;
