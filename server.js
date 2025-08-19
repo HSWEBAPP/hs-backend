@@ -20,9 +20,16 @@ const app = express()
 app.use(express.json())
 
 app.use(cors({
-  origin: "https://hs-frontend-1nft.vercel.app", // exact frontend URL
-  credentials: false,
+  origin: [
+    "https://hs-frontend-two.vercel.app",  // ✅ correct deployed frontend
+    "http://localhost:3000"                // ✅ for local dev
+  ],
+  credentials: true, // or false if you only use localStorage
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
+
+
 
 // Test route
 app.get('/', (req, res) => {
