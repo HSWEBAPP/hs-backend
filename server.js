@@ -20,10 +20,10 @@ const app = express()
 app.use(express.json())
 app.use(cors({
   origin: [
-    "https://hs-frontend-two.vercel.app/", // your new frontend
+    "https://hs-frontend-two.vercel.app", // your new frontend
     "http://localhost:5173"   // keep this if you still use old one
   ],
-  credentials: false
+  credentials: true
 }));
 
 
