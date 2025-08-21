@@ -101,7 +101,7 @@ export const deductToolUsage = async (req, res) => {
       user: user._id,
       type: "debit",
       amount: deductionAmount,
-      description: `Used tool: ${req.body.feature || "Unknown"}`,
+      description: `${req.body.feature || "Unknown"}`,
     });
 
     // ✅ return the updated wallet balance
