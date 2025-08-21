@@ -79,40 +79,54 @@ export const getQRRechargeHistory = async (req, res) => {
 };
 
 // Deduct amount when user uses a tool
+
+
+// Deduct ₹10 for tool usage
 export const deductToolUsage = async (req, res) => {
   try {
-    const deductionAmount = 10; // You can make this dynamic later
+    const deductionAmount = 10;
+
+    // Always fetch fresh user from DB
     const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (user.walletBalance < deductionAmount) {
+    if (user.wallet < deductionAmount) {
       return res.status(400).json({ message: "Insufficient balance" });
     }
 
-    // Deduct from wallet
-    user.walletBalance -= deductionAmount;
-    await user.save();
+    user.wallet -= deductionAmount;
+    await user.save(); // ✅ persist deduction
 
-    // Log transaction
     await WalletTransaction.create({
-      user: req.user._id,
+      user: user._id,
       type: "debit",
       amount: deductionAmount,
-      description: "Used tool: ID Card Printing",
+      description: `Used tool: ${req.body.feature || "Unknown"}`,
     });
 
+    // ✅ return the updated wallet balance
     res.json({
       message: "Amount deducted successfully",
-      balance: user.walletBalance,
+      balance: user.wallet, // this must now be a number
     });
   } catch (error) {
-    console.error("Error deducting tool usage:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Get transaction history for logged-in user
 export const getUserTransactions = async (req, res) => {

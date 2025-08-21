@@ -15,6 +15,7 @@ export const getWalletBalance = async (req, res) => {
 
 // ⚡ Deduct ₹10 from wallet
 export const deductWallet = async (req, res) => {
+  
   try {
     const { feature } = req.body;
     const user = await User.findById(req.user.id);
