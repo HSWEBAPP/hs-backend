@@ -131,11 +131,13 @@ export const deductToolUsage = async (req, res) => {
 // Get transaction history for logged-in user
 export const getUserTransactions = async (req, res) => {
   try {
-    const transactions = await WalletTransaction.find({ user: req.user._id })
+    const transactions = await Transaction.find({ userId: req.user._id })
       .sort({ createdAt: -1 });
 
     res.json(transactions);
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+  } catch (err) {
+    console.error("Error fetching user transactions:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
