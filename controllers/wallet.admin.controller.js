@@ -6,16 +6,13 @@ import Wallet from "../models/Wallet.js"
 // ------------------- RECHARGE HISTORY -------------------
 export const getRechargeHistory = async (req, res) => {
   try {
-    const recharges = await WalletRecharge.find()
-      .populate("user", "name email") // populate correctly
-      .sort({ createdAt: -1 });
-
+    const recharges = await RechargeRequest.find().sort({ createdAt: -1 });
     res.json(recharges);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 // Approve recharge
