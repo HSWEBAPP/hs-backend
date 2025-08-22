@@ -90,30 +90,34 @@ export const deductToolUsage = async (req, res) => {
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (user.wallet < deductionAmount) {
-      return res.status(400).json({ message: "Insufficient balance" });
+    // Admin bypass: no deduction
+    if (user.role !== 'admin') {
+      if (user.wallet < deductionAmount) {
+        return res.status(400).json({ message: "Insufficient balance" });
+      }
+
+      user.wallet -= deductionAmount;
+      await user.save(); // ✅ persist deduction
+
+      await WalletTransaction.create({
+        user: user._id,
+        type: "debit",
+        amount: deductionAmount,
+        description: `${req.body.feature || "Unknown"}`,
+      });
     }
 
-    user.wallet -= deductionAmount;
-    await user.save(); // ✅ persist deduction
-
-    await WalletTransaction.create({
-      user: user._id,
-      type: "debit",
-      amount: deductionAmount,
-      description: `${req.body.feature || "Unknown"}`,
-    });
-
-    // ✅ return the updated wallet balance
+    // ✅ return the wallet balance (for admin, no deduction happened)
     res.json({
       message: "Amount deducted successfully",
-      balance: user.wallet, // this must now be a number
+      balance: user.wallet,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 
 
