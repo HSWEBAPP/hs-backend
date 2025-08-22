@@ -1,6 +1,6 @@
 import express from "express";
 import { authMiddleware } from "../middleware/authMiddleware.js";
-import { submitQRRecharge,getQRRechargeHistory ,getUserTransactions, getMyRechargeRequests } from "../controllers/wallet.user.controller.js";
+import { submitQRRecharge ,getUserTransactions, getMyRechargeRequests } from "../controllers/wallet.user.controller.js";
 import { deductToolUsage } from "../controllers/wallet.user.controller.js";
 
 const router = express.Router();
