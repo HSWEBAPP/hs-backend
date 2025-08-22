@@ -31,7 +31,7 @@ export const createRechargeRequest = async (req, res) => {
 // List my recharge requests
 export const getMyRechargeRequests = async (req, res) => {
   try {
-    const recharges = await RechargeRequest.find({ user: req.user.id }).sort({ createdAt: -1 });
+    const recharges = await WalletRecharge.find({ user: req.user.id }).sort({ createdAt: -1 });
     res.json(recharges);
   } catch (error) {
     res.status(500).json({ message: error.message });
